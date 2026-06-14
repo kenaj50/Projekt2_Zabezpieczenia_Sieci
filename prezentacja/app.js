@@ -1,4 +1,3 @@
-// Interfejs prezentacji: trenuje model, generuje sieci i animuje propagacje ataku.
 
 const S = {
   net: null, skaler: null, waznosc: null, strataHist: null,
@@ -11,7 +10,6 @@ const $ = (id) => document.getElementById(id);
 const KOLORY = { brak: '#ef4444', losowa: '#f59e0b', stopien: '#8b5cf6', nn: '#22c55e' };
 const ETYK = { brak: 'Brak', losowa: 'Losowa', stopien: 'Stopień', nn: 'Sieć neuronowa' };
 
-// ---------- trening modelu ----------
 
 function trenujModel() {
   const rng = Rng(2024);
@@ -25,7 +23,6 @@ function trenujModel() {
       for (let v = 0; v < graf.n; v++) { X.push(c[v]); y.push(wart[v]); }
     }
   }
-  // standaryzacja wejscia oraz celu (stabilniejszy spadek gradientu)
   const my = y.reduce((a, b) => a + b, 0) / y.length;
   const sy = Math.sqrt(y.reduce((a, b) => a + (b - my) ** 2, 0) / y.length) || 1;
   const yz = y.map((v) => (v - my) / sy);
@@ -57,7 +54,6 @@ function waznoscCech(net, X, y) {
 
 function mse(p, y) { let s = 0; for (let i = 0; i < y.length; i++) s += (p[i] - y[i]) ** 2; return s / y.length; }
 
-// ---------- uklad grafu (force-directed) ----------
 
 function uklad(graf, iters) {
   iters = iters || 170;
@@ -91,13 +87,11 @@ function uklad(graf, iters) {
     }
     temp *= 0.975;
   }
-  // normalizacja do [0,1]
   let minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
   for (const [x, y] of pos) { minx = Math.min(minx, x); maxx = Math.max(maxx, x); miny = Math.min(miny, y); maxy = Math.max(maxy, y); }
   return pos.map(([x, y]) => [(x - minx) / (maxx - minx || 1), (y - miny) / (maxy - miny || 1)]);
 }
 
-// ---------- generowanie sieci do pokazu ----------
 
 function nowaSiec() {
   const typ = $('topo').value;
@@ -114,7 +108,7 @@ function nowaSiec() {
   $('verdict').innerHTML = 'Naciśnij <b>ATAK!</b>';
   $('bars').innerHTML = '';
   $('stat-none').textContent = 'zainfekowane: 0';
-  $('stat-ai').textContent = 'zainfekowane: 0';
+  $('stat-nn').textContent = 'zainfekowane: 0';
 }
 
 function obliczObrony() {
@@ -124,7 +118,6 @@ function obliczObrony() {
     S.obrony[strat] = wybierzObrone(strat, S.graf, S.w, B, S.pred, Rng(7));
 }
 
-// ---------- przebieg z czasami infekcji ----------
 
 function przebiegCzasy(adj, n, start, h, w, beta, maxK, rng) {
   const czas = new Int32Array(n).fill(-1);
@@ -170,7 +163,6 @@ function sredniaKrzywa(strat, beta) {
 function przygotujAtak() {
   const beta = +$('beta').value;
   const { adj, n } = S.graf;
-  // wspolny wezel startowy (poza zaporami NN), zeby plansze byly porownywalne
   const typStart = $('start').value;
   let kandydaci = []; for (let v = 0; v < n; v++) if (!S.obrony.nn.has(v)) kandydaci.push(v);
   if (typStart === 'centralny') {
@@ -192,17 +184,15 @@ function przygotujAtak() {
   }
 }
 
-// ---------- rysowanie planszy ----------
 
 function lerpKolor(t) {
-  // niebieski (niska podatnosc) -> pomaranczowy (wysoka)
   const a = [56, 189, 248], b = [251, 146, 60];
   const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
   return `rgb(${c[0]},${c[1]},${c[2]})`;
 }
 
 function rysujPlansze(krok, zObrona) {
-  const cv = zObrona ? $('cv-ai') : $('cv-none');
+  const cv = zObrona ? $('cv-nn') : $('cv-none');
   const ctx = cv.getContext('2d');
   const W = cv.width, H = cv.height, pad = 26;
   ctx.clearRect(0, 0, W, H);
@@ -245,14 +235,12 @@ function rysujPlansze(krok, zObrona) {
   }
 }
 
-// ---------- rysowanie wykresu ----------
 
 function rysujWykres(krok) {
   const cv = $('cv-chart'); const ctx = cv.getContext('2d');
   const W = cv.width, H = cv.height, L = 46, B = 32;
   ctx.clearRect(0, 0, W, H);
   ctx.strokeStyle = '#243355'; ctx.fillStyle = '#7e8db0'; ctx.font = '11px sans-serif'; ctx.lineWidth = 1;
-  // osie
   ctx.beginPath(); ctx.moveTo(L, 10); ctx.lineTo(L, H - B); ctx.lineTo(W - 10, H - B); ctx.stroke();
   for (let p = 0; p <= 100; p += 25) {
     const yy = (H - B) - (p / 100) * (H - B - 10);
@@ -275,7 +263,6 @@ function rysujWykres(krok) {
   }
 }
 
-// ---------- statystyki / werdykt ----------
 
 function pokazWynik() {
   const cz = S.czasyPolowa;
@@ -292,14 +279,13 @@ function pokazWynik() {
   const nn = cz.nn;
   let txt;
   if (nn >= najlepszaHeur && nn > cz.losowa * 1.3)
-    txt = `Obrona sieci neuronowej opóźniła atak najmocniej — ${(nn / Math.max(1, cz.losowa)).toFixed(1)}× dłużej niż obrona losowa.`;
+    txt = `Obrona sieci neuronowej opóźniła atak najmocniej, ok. ${(nn / Math.max(1, cz.losowa)).toFixed(1)}× dłużej niż losowa.`;
   else if (nn > cz.losowa * 1.3)
     txt = `Sieć neuronowa dorównuje najlepszej heurystyce i jest ${(nn / Math.max(1, cz.losowa)).toFixed(1)}× lepsza od losowej.`;
-  else txt = 'Sprawdź różne topologie i budżety — różnica zależy od struktury sieci.';
+  else txt = 'Spróbuj innej topologii albo budżetu.';
   $('verdict').innerHTML = txt;
 }
 
-// ---------- animacja ----------
 
 function animuj() {
   if (S.anim) cancelAnimationFrame(S.anim);
@@ -320,7 +306,7 @@ function animuj() {
       rysujWykres(k);
       const zN = liczZar(S.czasyNone, k), zNn = liczZar(S.czasyNn, k);
       $('stat-none').textContent = `zainfekowane: ${zN} / ${S.graf.n}`;
-      $('stat-ai').textContent = `zainfekowane: ${zNn} / ${S.graf.n} (zapory: ${S.obrony.nn.size})`;
+      $('stat-nn').textContent = `zainfekowane: ${zNn} / ${S.graf.n} (zapory: ${S.obrony.nn.size})`;
       k += krokNaRamke;
     }
     if (k <= T) S.anim = requestAnimationFrame(ramka);
@@ -331,7 +317,6 @@ function animuj() {
 
 function liczZar(czasy, k) { let c = 0; for (let i = 0; i < czasy.length; i++) if (czasy[i] >= 0 && czasy[i] <= k) c++; return c; }
 
-// ---------- wykres straty i waznosc cech ----------
 
 function rysujStrate() {
   const cv = $('cv-loss'); const ctx = cv.getContext('2d');
@@ -363,7 +348,6 @@ function pokazWaznosc() {
   $('feat').innerHTML = html;
 }
 
-// ---------- start ----------
 
 function start() {
   trenujModel();

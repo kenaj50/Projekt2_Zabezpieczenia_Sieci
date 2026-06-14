@@ -3,11 +3,7 @@ import networkx as nx
 
 
 def generuj_graf(typ="ba", n=60, m=2, p=0.08, k=4, skierowany=False, ziarno=None):
-    """Zwraca spojny graf wybranego typu.
-
-    typ: 'ba' (Barabasi-Albert), 'er' (Erdos-Renyi), 'ws' (Watts-Strogatz).
-    Przy skierowany=True losujemy kierunek kazdej krawedzi.
-    """
+    """Graf typu ba, er lub ws. Opcjonalnie skierowany."""
     if typ == "ba":
         G = nx.barabasi_albert_graph(n, m, seed=ziarno)
     elif typ == "er":
@@ -17,7 +13,7 @@ def generuj_graf(typ="ba", n=60, m=2, p=0.08, k=4, skierowany=False, ziarno=None
     else:
         raise ValueError("nieznany typ grafu: " + str(typ))
 
-    # bierzemy najwieksza skladowa spojna, zeby atak mial gdzie sie propagowac
+    # najwieksza skladowa spojna
     if not nx.is_connected(G):
         najwieksza = max(nx.connected_components(G), key=len)
         G = G.subgraph(najwieksza).copy()
@@ -41,22 +37,15 @@ def macierz_sasiedztwa(G):
 
 
 def macierz_przejscia(G):
-    """Macierz spaceru losowego P: znormalizowana wierszami macierz sasiedztwa.
-
-    P[i, j] to prawdopodobienstwo przejscia z wezla i do j w jednym kroku.
-    """
+    """Macierz przejscia spaceru losowego (normalizacja wierszami)."""
     A = macierz_sasiedztwa(G)
     stopnie = A.sum(axis=1, keepdims=True)
-    stopnie[stopnie == 0] = 1.0  # wezly bez wyjscia zostaja w miejscu
+    stopnie[stopnie == 0] = 1.0
     return A / stopnie
 
 
 def rozklad_stacjonarny(G, kroki=200, tol=1e-10):
-    """Rozklad stacjonarny spaceru losowego liczony metoda potegowa.
-
-    Dla nieskierowanego grafu zbiega do rozkladu proporcjonalnego do stopni,
-    ale liczymy go ogolnie (dziala tez dla skierowanych).
-    """
+    """Rozklad stacjonarny spaceru losowego (metoda potegowa)."""
     P = macierz_przejscia(G)
     n = P.shape[0]
     pi = np.full(n, 1.0 / n)
@@ -83,13 +72,7 @@ NAZWY_CECH = [
 
 def losuj_podatnosci(G, frakcja_serwerow=0.4, pod_serwer=0.25, pod_stacja=1.0,
                      ziarno=None):
-    """Parametr bezpieczenstwa wezla: podatnosc na zarazenie w (0, 1].
-
-    Czesc maszyn to dobrze zabezpieczone serwery (niska podatnosc), reszta to
-    slabsze stacje robocze (wysoka podatnosc). Typ jest niezalezny od stopnia
-    wezla, wiec sama topologia nie wystarcza, zeby dobrze rozstawic obrone.
-    Zwraca wektor indeksowany wezlami posortowanymi rosnaco.
-    """
+    """Losuje podatnosc wezlow: serwery niska, stacje wysoka."""
     rng = np.random.default_rng(ziarno)
     n = G.number_of_nodes()
     serwer = rng.random(n) < frakcja_serwerow
@@ -97,13 +80,7 @@ def losuj_podatnosci(G, frakcja_serwerow=0.4, pod_serwer=0.25, pod_stacja=1.0,
 
 
 def cechy_wierzcholkow(G, podatnosc):
-    """Macierz cech o wymiarze (liczba_wezlow, len(NAZWY_CECH)).
-
-    Wiersze odpowiadaja wezlom posortowanym rosnaco po etykiecie. Cechy
-    topologiczne sa znormalizowane tak, zeby nie zalezaly od rozmiaru grafu
-    (skala) -- dzieki temu model wytrenowany na malych sieciach dziala tez na
-    duzych. Ostatnia cecha to parametr bezpieczenstwa wezla (podatnosc).
-    """
+    """Cechy wezlow: stopien, centralnosci, podatnosc itd."""
     wezly = sorted(G.nodes())
     n = len(wezly)
     stopnie = dict(G.degree())
@@ -120,10 +97,10 @@ def cechy_wierzcholkow(G, podatnosc):
     X = np.zeros((n, len(NAZWY_CECH)))
     for i, v in enumerate(wezly):
         X[i] = [
-            stopnie[v] / sredni_stopien,   # stopien wzgledny
+            stopnie[v] / sredni_stopien,
             posrednictwo[v],
             bliskosc[v],
-            stacjonarny[i] * n,            # wzgledem rozkladu jednostajnego 1/n
+            stacjonarny[i] * n,
             gronowanie[v],
             rdzen[v] / max_rdzen,
             podatnosc[i],

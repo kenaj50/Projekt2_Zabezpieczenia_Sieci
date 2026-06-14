@@ -1,6 +1,3 @@
-// Logika modelu: generowanie grafow, symulacja ataku (spacer losowy) i siec
-// neuronowa uczona spadkiem gradientu. Wszystko napisane od zera.
-
 function mulberry32(a) {
   return function () {
     a |= 0; a = (a + 0x6D2B79F5) | 0;
@@ -19,7 +16,6 @@ function Rng(seed) {
   };
 }
 
-// ---------- generowanie grafow ----------
 
 function najwiekszaSkladowa(n, adj) {
   const odw = new Array(n).fill(-1);
@@ -84,7 +80,6 @@ function podatnosci(n, rng, frakcjaSerwerow) {
   return w;
 }
 
-// ---------- cechy wezlow ----------
 
 function rozkladStacjonarny(n, adj, kroki) {
   kroki = kroki || 120;
@@ -150,7 +145,6 @@ function cechy(graf, w) {
   return X;
 }
 
-// ---------- symulacja ataku (spacer losowy, model SI) ----------
 
 function symulujAtak(adj, n, start, h, w, beta, maxK, rng) {
   if (h[start] >= 1) return [0];
@@ -173,7 +167,6 @@ function symulujAtak(adj, n, start, h, w, beta, maxK, rng) {
   return hist;
 }
 
-// drzewo propagacji -> wartosc obronna (rozmiar poddrzewa infekcji)
 function wartoscObronna(adj, n, w, beta, maxK, ataki, rng) {
   const wart = new Float64Array(n);
   for (let a = 0; a < ataki; a++) {
@@ -206,7 +199,6 @@ function wartoscObronna(adj, n, w, beta, maxK, ataki, rng) {
   return wart;
 }
 
-// ---------- standaryzacja i siec neuronowa ----------
 
 function Standaryzacja() {
   return {
@@ -300,7 +292,6 @@ function Siec(nIn, hidden, rng) {
   };
 }
 
-// ---------- strategie obrony ----------
 
 function topK(wartosci, k, rng) {
   const n = wartosci.length;

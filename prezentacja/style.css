@@ -89,8 +89,8 @@ input[type="range"] { accent-color: var(--accent); }
 .bar-fill { height: 100%; border-radius: 6px; transition: width .4s; }
 .bar-row .val { width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
 
-.ai-info { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.ai-info canvas { background: #070b18; border-radius: 8px; }
+.ai-info, .nn-info { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.ai-info canvas, .nn-info canvas { background: #070b18; border-radius: 8px; }
 .feat { font-size: 12px; color: var(--muted); line-height: 1.7; }
 .feat b { color: var(--txt); }
 

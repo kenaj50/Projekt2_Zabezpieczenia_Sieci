@@ -7,12 +7,7 @@ from atak import lista_sasiedztwa, symuluj_atak, czas_do_progu, wartosc_obronna
 def zbior_treningowy(liczba_grafow=10, n=50, m=2, typy=("ba", "er", "ws"),
                      p=0.08, k=4, beta=0.5, liczba_atakow=60, ziarno=0,
                      postep=None):
-    """Buduje zbior (X, y) z roznorodnej rodziny grafow.
-
-    Dla kazdego typu topologii generujemy 'liczba_grafow' grafow, liczymy cechy
-    wierzcholkow i ich wartosc obronna (etykieta). Trening na mieszance topologii
-    sprawia, ze siec uczy sie strategii odpornej, a nie dopasowanej do jednego typu.
-    """
+    """Zbior (X, y) z roznych typow grafow."""
     if isinstance(typy, str):
         typy = (typy,)
     X_lista, y_lista = [], []
@@ -35,10 +30,7 @@ def zbior_treningowy(liczba_grafow=10, n=50, m=2, typy=("ba", "er", "ws"),
 
 
 def wybierz_obrone(strategia, G, budzet, X=None, predykcje=None, ziarno=0):
-    """Zwraca zbior indeksow wezlow, ktore utwardzamy (h=1).
-
-    strategia: 'losowa', 'stopien', 'posrednictwo', 'nn'.
-    """
+    """Wybiera wezly do utwardzenia. strategia: losowa, stopien, posrednictwo, nn."""
     import networkx as nx
 
     wezly = sorted(G.nodes())
@@ -48,7 +40,6 @@ def wybierz_obrone(strategia, G, budzet, X=None, predykcje=None, ziarno=0):
     rng = np.random.default_rng(ziarno)
 
     def najlepsze(wartosci):
-        # losowe rozstrzyganie remisow, zeby porownanie bylo uczciwe
         szum = rng.random(n) * 1e-9
         return set(np.argsort(np.asarray(wartosci) + szum)[::-1][:budzet].tolist())
 
@@ -66,11 +57,7 @@ def wybierz_obrone(strategia, G, budzet, X=None, predykcje=None, ziarno=0):
 
 def przebieg_strategii(G, bronione, podatnosc, beta=0.5, liczba_atakow=30,
                        max_krokow=200, ziarno=123):
-    """Usrednione krzywe propagacji i metryki dla danej obrony.
-
-    Zwraca slownik: srednia krzywa, czas do zarazenia polowy sieci,
-    koncowy odsetek zainfekowanych.
-    """
+    """Srednia krzywa ataku i metryki dla danej obrony."""
     sasiedzi = lista_sasiedztwa(G)
     n = G.number_of_nodes()
     h = np.zeros(n)

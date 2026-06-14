@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Standaryzacja:
-    """Standaryzacja cech (z-score). Liczona na zbiorze treningowym."""
+    """Standaryzacja cech (z-score)."""
 
     def __init__(self):
         self.srednia = None
@@ -22,11 +22,7 @@ class Standaryzacja:
 
 
 class SiecNeuronowa:
-    """Perceptron wielowarstwowy uczony spadkiem gradientu (od zera).
-
-    Warstwy ukryte z aktywacja ReLU, wyjscie liniowe (regresja).
-    Strata: blad sredniokwadratowy. Gradienty z propagacji wstecznej.
-    """
+    """MLP z ReLU, uczony spadkiem gradientu."""
 
     def __init__(self, n_wejsc, ukryte=(32, 16), ziarno=0):
         rng = np.random.default_rng(ziarno)
@@ -34,7 +30,6 @@ class SiecNeuronowa:
         self.W = []
         self.b = []
         for i in range(len(rozmiary) - 1):
-            # inicjalizacja He dla warstw z ReLU
             skala = np.sqrt(2.0 / rozmiary[i])
             self.W.append(rng.normal(0.0, skala, (rozmiary[i], rozmiary[i + 1])))
             self.b.append(np.zeros(rozmiary[i + 1]))
@@ -47,9 +42,9 @@ class SiecNeuronowa:
             z = a @ self.W[i] + self.b[i]
             z_lista.append(z)
             if i < len(self.W) - 1:
-                a = np.maximum(0.0, z)  # ReLU
+                a = np.maximum(0.0, z)
             else:
-                a = z  # wyjscie liniowe
+                a = z
             aktywacje.append(a)
         return aktywacje, z_lista
 
@@ -72,12 +67,10 @@ class SiecNeuronowa:
                 yhat = aktywacje[-1]
 
                 m = Xb.shape[0]
-                # pochodna straty MSE po wyjsciu
                 dA = (2.0 / m) * (yhat - yb)
-                # propagacja wsteczna
                 for i in reversed(range(len(self.W))):
                     if i < len(self.W) - 1:
-                        dZ = dA * (z_lista[i] > 0)  # pochodna ReLU
+                        dZ = dA * (z_lista[i] > 0)
                     else:
                         dZ = dA
                     dW = aktywacje[i].T @ dZ
@@ -92,11 +85,7 @@ class SiecNeuronowa:
 
 
 def waznosc_cech(siec, X, y, nazwy, powtorzenia=10, ziarno=0):
-    """Waznosc cech metoda permutacji.
-
-    Mieszamy po kolei kazda ceche i mierzymy, o ile wzrasta blad. Im wiekszy
-    wzrost, tym wazniejsza cecha dla modelu.
-    """
+    """Waznosc cech metoda permutacji."""
     rng = np.random.default_rng(ziarno)
     bazowy = np.mean((siec.predykcja(X) - y) ** 2)
     wynik = {}

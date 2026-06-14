@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zabezpieczenia sieci — propagacja ataku i sieć neuronowa</title>
+<title>Zabezpieczenia sieci - propagacja ataku i sieć neuronowa</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,8 +16,8 @@
 
 <header>
   <h1>Zabezpieczenia sieci z wykorzystaniem sieci neuronowej</h1>
-  <p class="sub">Atak propaguje się przez sieć jak spacer losowy. Sieć neuronowa
-  uczy się, które węzły utwardzić, żeby go opóźnić. Projekt 8 — Matematyczne fundamenty informatyki.</p>
+  <p class="sub">Atak idzie przez sieć jak spacer losowy. Sieć neuronowa
+  wskazuje, które węzły utwardzić, żeby go spowolnić.</p>
 </header>
 
 <section class="panel controls">
@@ -62,8 +62,8 @@
   </div>
   <div class="board">
     <div class="board-head"><span class="dot green"></span>Obrona (sieć neuronowa)</div>
-    <canvas id="cv-ai" width="560" height="440"></canvas>
-    <div class="board-stat" id="stat-ai">zainfekowane: 0</div>
+    <canvas id="cv-nn" width="560" height="440"></canvas>
+    <div class="board-stat" id="stat-nn">zainfekowane: 0</div>
   </div>
 </section>
 
@@ -83,7 +83,7 @@
     <div id="verdict" class="verdict">Naciśnij <b>ATAK!</b></div>
     <div id="bars" class="bars"></div>
     <h3 style="margin-top:18px">Czego nauczyła się sieć neuronowa</h3>
-    <div class="ai-info">
+    <div class="nn-info">
       <canvas id="cv-loss" width="320" height="120"></canvas>
       <div id="feat" class="feat"></div>
     </div>
@@ -91,9 +91,9 @@
 </section>
 
 <footer>
-  Model i symulacja napisane od zera (graf, spacer losowy, sieć neuronowa uczona spadkiem gradientu).
-  Kolor węzła = podatność (pomarańczowy — wysoka, niebieski — niska).
-  Czerwony = zainfekowany, zielona obwódka = zapora (sieć neuronowa).
+  Graf, symulacja ataku i sieć neuronowa (numpy).
+  Kolor węzła = podatność (pomarańcz = wysoka, niebieski = niska).
+  Czerwony = zainfekowany, zielona obwódka = zapora.
 </footer>
 
 <script src="core.js"></script>
