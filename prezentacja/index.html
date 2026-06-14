@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zabezpieczenia sieci — propagacja ataku i sieć neuronowa</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="overlay" class="overlay">
+  <div class="overlay-box">
+    <div class="spinner"></div>
+    <div id="overlay-text">Sieć neuronowa uczy się bronić sieci...</div>
+  </div>
+</div>
+
+<header>
+  <h1>Zabezpieczenia sieci z wykorzystaniem sieci neuronowej</h1>
+  <p class="sub">Atak propaguje się przez sieć jak spacer losowy. Sieć neuronowa
+  uczy się, które węzły utwardzić, żeby go opóźnić. Projekt 8 — Matematyczne fundamenty informatyki.</p>
+</header>
+
+<section class="panel controls">
+  <div class="ctrl">
+    <label>Topologia sieci</label>
+    <select id="topo">
+      <option value="ba">Barabási–Albert (internet)</option>
+      <option value="ws">Watts–Strogatz (społeczna)</option>
+      <option value="er">Erdős–Rényi (losowa)</option>
+    </select>
+  </div>
+  <div class="ctrl">
+    <label>Rozmiar sieci: <b id="nVal">140</b></label>
+    <input id="n" type="range" min="60" max="240" step="10" value="140">
+  </div>
+  <div class="ctrl">
+    <label>Budżet obrony: <b id="bVal">10</b></label>
+    <input id="budget" type="range" min="1" max="40" step="1" value="10">
+  </div>
+  <div class="ctrl">
+    <label>Zaraźliwość: <b id="betaVal">0.50</b></label>
+    <input id="beta" type="range" min="0.1" max="1" step="0.05" value="0.5">
+  </div>
+  <div class="ctrl">
+    <label>Start ataku</label>
+    <select id="start">
+      <option value="losowy">losowy węzeł</option>
+      <option value="centralny">centralny hub</option>
+    </select>
+  </div>
+  <div class="ctrl btns">
+    <button id="nowa" class="btn">Nowa sieć</button>
+    <button id="atak" class="btn danger">▶ ATAK!</button>
+  </div>
+</section>
+
+<section class="boards">
+  <div class="board">
+    <div class="board-head"><span class="dot red"></span>Bez obrony</div>
+    <canvas id="cv-none" width="560" height="440"></canvas>
+    <div class="board-stat" id="stat-none">zainfekowane: 0</div>
+  </div>
+  <div class="board">
+    <div class="board-head"><span class="dot green"></span>Obrona (sieć neuronowa)</div>
+    <canvas id="cv-ai" width="560" height="440"></canvas>
+    <div class="board-stat" id="stat-ai">zainfekowane: 0</div>
+  </div>
+</section>
+
+<section class="lower">
+  <div class="panel chart-panel">
+    <h3>Tempo propagacji ataku (średnia z wielu przebiegów)</h3>
+    <canvas id="cv-chart" width="720" height="360"></canvas>
+    <div class="legend">
+      <span><i style="background:#ef4444"></i>Brak obrony</span>
+      <span><i style="background:#f59e0b"></i>Losowa</span>
+      <span><i style="background:#8b5cf6"></i>Stopień</span>
+      <span><i style="background:#22c55e"></i>Sieć neuronowa</span>
+    </div>
+  </div>
+  <div class="panel side">
+    <h3>Wynik obrony (czas do zarażenia połowy sieci)</h3>
+    <div id="verdict" class="verdict">Naciśnij <b>ATAK!</b></div>
+    <div id="bars" class="bars"></div>
+    <h3 style="margin-top:18px">Czego nauczyła się sieć neuronowa</h3>
+    <div class="ai-info">
+      <canvas id="cv-loss" width="320" height="120"></canvas>
+      <div id="feat" class="feat"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Model i symulacja napisane od zera (graf, spacer losowy, sieć neuronowa uczona spadkiem gradientu).
+  Kolor węzła = podatność (pomarańczowy — wysoka, niebieski — niska).
+  Czerwony = zainfekowany, zielona obwódka = zapora (sieć neuronowa).
+</footer>
+
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
