@@ -1,15 +1,14 @@
 # Zabezpieczenia sieci z wykorzystaniem sieci neuronowej
 
-Projekt z przedmiotu Matematyczne fundamenty informatyki.
+Matematyczne fundamenty informatyki.
 
 Sieć komputerów traktujemy jako graf. Atak to spacer losowy: zainfekowany węzeł
-próbuje zarazić losowego sąsiada. Każdy węzeł ma podatność (serwer vs stacja).
+próbuje zarazić losowego sąsiada; każdy węzeł ma podatność (serwer vs stacja).
 Uczymy sieć neuronową, która wskazuje, które węzły utwardzić, żeby spowolnić
-propagację. Porównujemy to z obroną losową i heurystykami (stopień, pośrednictwo).
+propagację i na końcu orównujemy to z obroną losową i heurystykami (stopień, pośrednictwo).
 
 ## Uruchomienie
 
-Jedno środowisko dla całego kursu (folder nadrzędny `Matematyczne fundamenty informatyki`):
 
 ```bash
 cd ".."
@@ -18,10 +17,10 @@ source .venv/bin/activate
 pip install -r requirements.txt
 jupyter lab Zabezpieczenia_Sieci_NN.ipynb
 ```
+Lub po prostu uruchomic lokalnie Zabezpieczenia_Sieci_NN.ipynb 
 
-W Cursorze wybierz kernel: **Python (Matma MFI)** albo `.venv (Python 3.13)`.
 
-Prezentacja (otwórz w przeglądarce):
+Prezentacja (w przeglądarce):
 
 ```
 prezentacja/index.html
