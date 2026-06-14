@@ -5,3 +5,4 @@ __pycache__/
 .ipynb_checkpoints/
 wyniki/
 PLAN.md
+.vscode/settings.json
